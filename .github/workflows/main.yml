@@ -6,11 +6,9 @@ on:
   pull_request:
 
 jobs:
-  build-and-push-docker-image:
-  needs: test-backend
-  runs-on: ubuntu-22.04
-
-  steps:
+  test-backend: 
+    runs-on: ubuntu-22.04
+    steps:
       - uses: actions/checkout@v4
 
       - name: Set up JDK 21
@@ -23,23 +21,28 @@ jobs:
         run: mvn clean verify
         working-directory: ./tp-devops-correction-docker/simple-api
 
-      - name: Login to DockerHub
-        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+  build-and-push-docker-image:
+    needs: test-backend
+    runs-on: ubuntu-22.04
+    steps:
+        
+        - name: Login to DockerHub
+          run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build image and push backend
-        uses: docker/build-push-action@v3
-        with:
-          context: ./tp-devops-correction-docker/simple-api
-          tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
+        - name: Build image and push backend
+          uses: docker/build-push-action@v3
+          with:
+            context: ./tp-devops-correction-docker/simple-api
+            tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
 
-      - name: Build image and push database
-        uses: docker/build-push-action@v3
-        with:
-          context: ./tp-devops-correction-docker/database
-          tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
+        - name: Build image and push database
+          uses: docker/build-push-action@v3
+          with:
+            context: ./tp-devops-correction-docker/database
+            tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
 
-      - name: Build image and push httpd
-        uses: docker/build-push-action@v3
-        with:
-          context: ./tp-devops-correction-docker/http-server
-          tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:latest
+        - name: Build image and push httpd
+          uses: docker/build-push-action@v3
+          with:
+            context: ./tp-devops-correction-docker/http-server
+            tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:latest
