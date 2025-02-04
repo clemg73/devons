@@ -7,3 +7,36 @@ On utlie le même network pour que le adminer puisse accéder à la bdd. On mets
 
 docker run  -p "8090:8080"  --net=app-network  --name=adminer -d  
 On map le port 8090 du host au port 8080 du container pour avoir accès à la page web d'adminer depuis le host et on ajoute le même network que la bdd.
+
+Q1.4:
+# le multistage build permet de build d'un coté et de run de l'autre, ça permet de compartimenter.
+# La base est un maven e on le nomme pour pouvoir y accéder depuis le amazoncorretto
+FROM maven:3.9.9-amazoncorretto-21 AS myapp-build
+ENV MYAPP_HOME=/opt/myapp 
+WORKDIR $MYAPP_HOME
+# On copie les fichiers et dossier du projet
+COPY pom.xml .
+COPY src ./src
+# On compile
+RUN mvn package -DskipTests
+
+# Run
+FROM amazoncorretto:21
+ENV MYAPP_HOME=/opt/myapp 
+WORKDIR $MYAPP_HOME
+# On copie le fichier compiler
+COPY --from=myapp-build $MYAPP_HOME/target/*.jar $MYAPP_HOME/myapp.jar
+# On le lance
+ENTRYPOINT ["java", "-jar", "myapp.jar"]
+
+Q1.5: Le reverse proxy permet d'avoir un seul point d'entré et de pouvoir sécuriser les accès
+Q1.6: Docker-compose permet d'enregistrer les paramètres que l'on met dans docker run. ça permet par exemple entre une team de lancer les containers de la meme façon
+Q1.7: 
+# A chaque fois on spécifie l'image à up, le nom du container que l'on verra dans "docker ps".
+# Avec depend_on on synchronise les différents container pour lancer la bdd puis le back puis le serveur
+# Enfin on ajoute le réseau on les mets tous sur le meme réseau pour qu'ils discutent
+
+Q1.8:
+# On ajoute un tag (ici 1.0) pour versionner 
+
+Q2.1: Les tests containers serve à tester différents partie du code

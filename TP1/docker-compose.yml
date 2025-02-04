@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  backend:
+    build: "simple-api-student"
+    container_name: simple_api_student
+    depends_on:
+      - database
+    networks:
+      - app-network
+  database:
+    build: "database"
+    container_name: tp1_database
+    networks:
+      - app-network
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=usr
+      - POSTGRES_PASSWORD=pwd
+
+
+  httpd:
+    build: "httpServer"
+    container_name: http_server
+    ports:
+      - "80:80"
+    networks:
+      - app-network
+
+networks:
+  app-network:
