@@ -6,55 +6,50 @@ on:
     branches:
       - "main"
 
-
 jobs:
   build-and-push-docker-image:
     runs-on: ubuntu-22.04
     steps:
 
-        - name: Checkout code
-          uses: actions/checkout@v4
-        
-        - name: Login to DockerHub
-          run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-        - name: Get latest tag and increment version
-          run: |
-            IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api
-            LATEST_TAG=$(curl -s "https://hub.docker.com/v2/repositories/$IMAGE_NAME/tags/" | jq -r '.results | map(.name | select(test("^[0-9]+\\.[0-9]+$"))) | sort | last')
-            if [[ -z "$LATEST_TAG" || "$LATEST_TAG" == "null" ]]; then
-              NEW_TAG="0.1"
-            else
-              MAJOR=$(echo $LATEST_TAG | cut -d. -f1)
-              MINOR=$(echo $LATEST_TAG | cut -d. -f2)
-              NEW_TAG="$MAJOR.$(($MINOR + 1))"
-            fi
-            echo "New tag: $NEW_TAG"
-            echo "VERSION=$NEW_TAG" >> $GITHUB_ENV
+      - name: Install Maven
+        run: sudo apt update && sudo apt install -y maven
 
-        - name: Build image and push backend
-          uses: docker/build-push-action@v3
-          with:
-            context: ./tp-devops-correction-docker/simple-api
-            tags: |
-              ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
-              ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:${{ env.VERSION }}
-            push: ${{ github.ref == 'refs/heads/main' }}
+      - name: Extract version from pom.xml
+        id: versioning
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "Extracted version: $VERSION"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
 
-        - name: Build image and push database
-          uses: docker/build-push-action@v3
-          with:
-            context: ./tp-devops-correction-docker/database
-            tags: |
-              ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
-              ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:${{ env.VERSION }}
-            push: ${{ github.ref == 'refs/heads/main' }}
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
-        - name: Build image and push httpd
-          uses: docker/build-push-action@v3
-          with:
-            context: ./tp-devops-correction-docker/http-server
-            tags: |
-              ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:latest
-              ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:${{ env.VERSION }}
-            push: ${{ github.ref == 'refs/heads/main' }}
+      - name: Build image and push backend
+        uses: docker/build-push-action@v3
+        with:
+          context: ./tp-devops-correction-docker/simple-api
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:${{ env.VERSION }}
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build image and push database
+        uses: docker/build-push-action@v3
+        with:
+          context: ./tp-devops-correction-docker/database
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:${{ env.VERSION }}
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build image and push httpd
+        uses: docker/build-push-action@v3
+        with:
+          context: ./tp-devops-correction-docker/http-server
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:latest
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:${{ env.VERSION }}
+          push: ${{ github.ref == 'refs/heads/main' }}
