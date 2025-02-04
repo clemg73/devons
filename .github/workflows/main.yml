@@ -1,8 +1,7 @@
 name: CI devops 2025
 on:
-  #to begin you want to launch this job in main and develop
   push:
-    branches: #TODO 
+    branches: main
   pull_request:
 
 jobs:
@@ -18,8 +17,9 @@ jobs:
           java-version: '21'
 
       - name: Build and test with Maven
-        run: mvn clean verify
-        working-directory: ./tp-devops-correction-docker/simple-api
+        run: |
+          cd ./tp-devops-correction-docker/simple-api
+          mvn clean verify
 
   build-and-push-docker-image:
     needs: test-backend
