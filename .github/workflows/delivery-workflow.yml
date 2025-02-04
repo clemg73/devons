@@ -1,26 +1,12 @@
-name: CI devops 2025
+name: CI delivery 2025
 on:
-  push:
-    branches: main
-  pull_request:
+  workflow_run:
+    workflows: ['CI devops 2025']
+    types: [completed]
+    branches-ignore:
+      - "develop"
 
 jobs:
-  test-backend: 
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'corretto'
-          java-version: '21'
-
-      - name: Build and test with Maven
-        run: |
-          cd ./tp-devops-correction-docker/simple-api
-          mvn -B verify sonar:sonar -Dsonar.projectKey=clemg73_clemg73 -Dsonar.organization=clemg73 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}  --file ./pom.xml
-
   build-and-push-docker-image:
     needs: test-backend
     runs-on: ubuntu-22.04
