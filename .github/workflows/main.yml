@@ -37,15 +37,18 @@ jobs:
           with:
             context: ./tp-devops-correction-docker/simple-api
             tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
+            push: ${{ github.ref == 'refs/heads/main' }}
 
         - name: Build image and push database
           uses: docker/build-push-action@v3
           with:
             context: ./tp-devops-correction-docker/database
             tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
+            push: ${{ github.ref == 'refs/heads/main' }}
 
         - name: Build image and push httpd
           uses: docker/build-push-action@v3
           with:
             context: ./tp-devops-correction-docker/http-server
             tags:  ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:latest
+            push: ${{ github.ref == 'refs/heads/main' }}
