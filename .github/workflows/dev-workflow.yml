@@ -37,7 +37,7 @@ jobs:
           mvn -B verify sonar:sonar -Dsonar.projectKey=clemg73_clemg73 -Dsonar.organization=clemg73 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}  --file ./pom.xml
 
   cancel-pr-on-failure:
-    needs: [test-backend, sonar-backend]
+    needs: [test-backend, sonarcloud]
     if: failure()
     runs-on: ubuntu-22.04
     steps: 
