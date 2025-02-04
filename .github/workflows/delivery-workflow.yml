@@ -20,6 +20,7 @@ jobs:
       - name: Extract version from pom.xml
         id: versioning
         run: |
+          cd ./tp-devops-correction-docker/simple-api
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
           echo "Extracted version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
