@@ -34,8 +34,8 @@ jobs:
         with:
           context: ./tp-devops-correction-docker/simple-api
           tags: |
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:${{ env.VERSION }}
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
           push: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Build image and push database
@@ -43,8 +43,8 @@ jobs:
         with:
           context: ./tp-devops-correction-docker/database
           tags: |
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:${{ env.VERSION }}
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
           push: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Build image and push httpd
@@ -52,6 +52,6 @@ jobs:
         with:
           context: ./tp-devops-correction-docker/http-server
           tags: |
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:latest
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:${{ env.VERSION }}
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:latest
           push: ${{ github.ref == 'refs/heads/main' }}
