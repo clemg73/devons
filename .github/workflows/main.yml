@@ -20,6 +20,7 @@ jobs:
         run: |
           cd ./tp-devops-correction-docker/simple-api
           mvn clean verify
+          cd ../../
 
   build-and-push-docker-image:
     needs: test-backend
