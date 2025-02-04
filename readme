@@ -41,3 +41,4 @@ Q1.8:
 
 Q2.1: Les tests containers serve à tester différents partie du code
 Q2.2: On utilise la distribution correto car dans le dockerfile on utilise ça. Les action peuvent être mise sur la version 4, le tp n'est pas a jour
+Q2.3: Pour le versionning
