@@ -42,3 +42,9 @@ Q1.8:
 Q2.1: Les tests containers serve à tester différents partie du code
 Q2.2: On utilise la distribution correto car dans le dockerfile on utilise ça. Les action peuvent être mise sur la version 4, le tp n'est pas a jour
 Q2.3: Pour le versionning
+Q2.4:
+On met un regle pour le build et les tests maven
+On met une regle sonarcloud
+Si une des deux marche pas ça bloque la merge requeste
+Ensuite dans un autre workflow on ajoute un system qui va récupérer la version du pom et le met dans le tag pour les images dockerhub
+Si ce job ne marche pas ça block la merge request
