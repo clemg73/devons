@@ -41,7 +41,7 @@ jobs:
     if: failure()
     runs-on: ubuntu-22.04
     steps: 
-      name: Close PR on Failure
+      - name: Close PR on Failure
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
