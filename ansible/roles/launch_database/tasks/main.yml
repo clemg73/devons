@@ -1,7 +1,7 @@
 - name: Run Databse
   docker_container:
     name: database
-    image: clemg73/tp-devops-database:0.0.72
+    image: clemg73/tp-devops-database:0.0.73
     networks:
       - name: 3-tiers-app-network
     volumes:

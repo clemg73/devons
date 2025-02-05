@@ -1,7 +1,7 @@
 - name: Run App
   docker_container:
     name: app
-    image: clemg73/tp-devops-simple-api:0.0.72
+    image: clemg73/tp-devops-simple-api:0.0.73
     networks:
       - name: 3-tiers-app-network
     env:
