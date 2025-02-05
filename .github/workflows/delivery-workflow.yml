@@ -76,6 +76,10 @@ jobs:
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:latest
           push: ${{ github.ref == 'refs/heads/main' }}
 
+      - name: Run Docker container
+        run: |
+          docker run ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:latest
+
   cancel-pr-on-failure:
     needs: [build-and-push-docker-image]
     if: failure()
