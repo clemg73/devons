@@ -19,6 +19,8 @@ jobs:
 
       - name: Write SSH private key to file
         run: |
+          mkdir /ssh
+          touch /ssh/id_rsa
           echo "${{ secrets.ID_RSA }}" > /ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           # Optionnel : Vérification du contenu de la clé (ne jamais afficher la clé réelle dans les logs)
