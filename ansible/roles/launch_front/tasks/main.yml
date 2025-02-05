@@ -5,4 +5,3 @@
     pull: yes
     networks:
       - name: app-proxy-network
-    env_file: /setup/.env
