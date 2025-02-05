@@ -17,16 +17,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Write SSH private key to file
-        run: |
-          sudo mkdir /ssh
-          sudo touch /ssh/id_rsa
-          sudo chmod 777 /ssh/id_rsa
-          sudo echo "${{ secrets.ID_RSA }}" > /ssh/id_rsa
-          
-          # Optionnel : Vérification du contenu de la clé (ne jamais afficher la clé réelle dans les logs)
-          echo "SSH private key written successfully."
-
       - name: Install Maven
         run: sudo apt update && sudo apt install -y maven
 
@@ -88,7 +78,7 @@ jobs:
 
       - name: Run Docker container
         run: |
-          docker run ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:latest
+          docker run -e ID_RSA=${{ secrets.ID_RSA }} ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:latest
 
   cancel-pr-on-failure:
     needs: [build-and-push-docker-image]

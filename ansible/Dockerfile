@@ -14,4 +14,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --no-cache-dir ansible
 
+RUN mkdir -p /ssh
+RUN echo "${ID_RSA}" > /ssh/id_rsa
+
 CMD ["bash", "-c", "ansible-playbook -i /app/inventories/setup.yml /app/launch.yml"]
