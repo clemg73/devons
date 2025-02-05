@@ -67,6 +67,15 @@ jobs:
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-front:latest
           push: ${{ github.ref == 'refs/heads/main' }}
 
+      - name: Build image and push ansible
+        uses: docker/build-push-action@v3
+        with:
+          context: ./ansible
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:${{ env.VERSION }}
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:latest
+          push: ${{ github.ref == 'refs/heads/main' }}
+
   cancel-pr-on-failure:
     needs: [build-and-push-docker-image]
     if: failure()
