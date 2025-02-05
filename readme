@@ -48,3 +48,20 @@ On met une regle sonarcloud
 Si une des deux marche pas ça bloque la merge requeste
 Ensuite dans un autre workflow on ajoute un system qui va récupérer la version du pom et le met dans le tag pour les images dockerhub
 Si ce job ne marche pas ça block la merge request
+
+Q3.1: 
+Le fichier setup.yml à "vars" pour définir les variable de connexion, user et clé RSA.
+Dans children, on défininun groupe d'host: ici c'est prod mais ça pourrait être front, back etc etc
+
+ansible all -i inventories/setup.yml -m apt -a "name=apache2 state=absent" --become
+Dans cette ligne, on lance une commande sur tout nos hosts, en donnant le chemin de notre inventaire, et avec apt on "désinstal" apache2 est mettant le state "absent". "become" sert à etre super-utilisateur
+
+Q.3.2:
+---
+- name: Déploiement de Docker
+  hosts: all # S'applique a tous les hosts
+  become: yes # Est super utilisateur
+  roles:
+    - docker # Vachercher les taches et/ou handler du role docker (dossier roles) 
+
+

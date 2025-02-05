@@ -1,0 +1,9 @@
+- name: Run App
+  docker_container:
+    name: app
+    image: clemg73/tp-devops-simple-api
+    networks:
+      - name: 3-tiers-app-network
+    env:
+      DATABASE_HOST: "database"
+      DATABASE_PASSWORD: "pwd"
