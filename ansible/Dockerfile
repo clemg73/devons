@@ -14,7 +14,4 @@ RUN apt-get update && apt-get install -y \
 
 RUN pip install --no-cache-dir ansible
 
-RUN mkdir -p /etc/ansible
-RUN echo "[all]\n${ANSIBLE_HOST_URL}" > /etc/ansible/hosts
-
 CMD ["bash", "-c", "ansible-playbook -i /app/inventories/setup.yml /app/launch.yml"]
