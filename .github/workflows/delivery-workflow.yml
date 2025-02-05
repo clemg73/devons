@@ -31,7 +31,7 @@ jobs:
       - name: Build image and push backend
         uses: docker/build-push-action@v3
         with:
-          context: ../../src/tp-devops-correction-docker/simple-api
+          context: ./src/tp-devops-correction-docker/simple-api
           tags: |
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:${{ env.VERSION }}
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
