@@ -20,7 +20,7 @@ jobs:
       - name: Extract version from pom.xml
         id: versioning
         run: |
-          cd ./tp-devops-correction-docker/simple-api
+          cd ./src/tp-devops-correction-docker/simple-api
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')
           echo "Extracted version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -32,7 +32,7 @@ jobs:
       - name: Build image and push backend
         uses: docker/build-push-action@v3
         with:
-          context: ./tp-devops-correction-docker/simple-api
+          context: ./src/tp-devops-correction-docker/simple-api
           tags: |
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:${{ env.VERSION }}
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
@@ -41,7 +41,7 @@ jobs:
       - name: Build image and push database
         uses: docker/build-push-action@v3
         with:
-          context: ./tp-devops-correction-docker/database
+          context: ./src/tp-devops-correction-docker/database
           tags: |
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:${{ env.VERSION }}
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
@@ -50,10 +50,19 @@ jobs:
       - name: Build image and push httpd
         uses: docker/build-push-action@v3
         with:
-          context: ./tp-devops-correction-docker/http-server
+          context: ./src/tp-devops-correction-docker/http-server
           tags: |
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:${{ env.VERSION }}
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:latest
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build image and push front
+        uses: docker/build-push-action@v3
+        with:
+          context: ./src/tp-devops-correction-docker/devops-front-main
+          tags: |
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-front:${{ env.VERSION }}
+            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-front:latest
           push: ${{ github.ref == 'refs/heads/main' }}
 
   cancel-pr-on-failure:

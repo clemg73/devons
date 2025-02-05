@@ -1,0 +1,3 @@
+secrets
+ansible/roles/setup_app/files/.env
+ansible/roles/setup_database/files/.env

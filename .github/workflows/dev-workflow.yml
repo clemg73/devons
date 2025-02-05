@@ -18,7 +18,7 @@ jobs:
 
       - name: Build and test with Maven
         run: |
-          cd ./tp-devops-correction-docker/simple-api
+          cd ./src/tp-devops-correction-docker/simple-api
           mvn clean verify
 
 
@@ -35,7 +35,7 @@ jobs:
 
       - name: Send to Sonarcloud
         run: |
-          cd ./tp-devops-correction-docker/simple-api
+          cd ./src/tp-devops-correction-docker/simple-api
           mvn -B verify sonar:sonar -Dsonar.projectKey=clemg73_clemg73 -Dsonar.organization=clemg73 -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}  --file ./pom.xml
 
   cancel-pr-on-failure:

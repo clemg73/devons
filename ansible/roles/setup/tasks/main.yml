@@ -1,0 +1,12 @@
+---
+- name: Create the directory for the .env file
+  file:
+    path: "/setup"
+    state: directory
+    mode: '0755'
+
+- name: Copy the .env file to the directory
+  copy:
+    src: .env
+    dest: "/setup/.env"
+    mode: '0644'

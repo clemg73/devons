@@ -1,8 +1,9 @@
 - name: Run HTTPD
   docker_container:
-    name: httpd
-    image: clemg73/tp-devops-http-server:0.0.73
+    name: http-server
+    image: clemg73/tp-devops-http-server:latest
+    pull: yes
     networks:
-      - name: 3-tiers-app-network
+      - name: app-proxy-network
     ports:
       - "80:80"

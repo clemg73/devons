@@ -1,0 +1,8 @@
+
+- name: Create db-app network
+  community.docker.docker_network:
+    name: db-app-network
+
+- name: Create app-proxy network
+  community.docker.docker_network:
+    name: app-proxy-network

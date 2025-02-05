@@ -1,10 +1,10 @@
 - name: Run Databse
   docker_container:
     name: database
-    image: clemg73/tp-devops-database:0.0.73
+    image: clemg73/tp-devops-database:latest
+    pull: yes
     networks:
-      - name: 3-tiers-app-network
+      - name: db-app-network
     volumes:
       - db-volume:/var/lib/postgresql/data
-    env:
-      POSTGRES_PASSWORD: "pwd"
+    env_file: /setup/.env
