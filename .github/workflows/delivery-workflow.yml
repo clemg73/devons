@@ -76,9 +76,18 @@ jobs:
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:latest
           push: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Lancer le conteneur avec le fichier monté
+      - name: Ajouter la clé SSH à ~/.ssh
         run: |
-          docker run -e ID_RSA="${{ secrets.ID_RSA }}" ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-ansible:latest
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ID_RSA }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+
+      - name: Lancer le conteneur avec la clé SSH montée
+        run: |
+          docker run --rm \
+            -v ~/.ssh/id_rsa:/root/.ssh/id_rsa \
+            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-ansible:latest
+
 
   cancel-pr-on-failure:
     needs: [build-and-push-docker-image]
