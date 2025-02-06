@@ -76,9 +76,16 @@ jobs:
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:latest
           push: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Run Docker container
+      - name: Création de la clé privée temporaire
         run: |
-          docker run -e ID_RSA=${{ secrets.ID_RSA }} ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:latest
+          echo "${{ secrets.ID_RSA }}" > id_rsa
+          chmod 600 id_rsa
+
+      - name: Lancer le conteneur avec le fichier monté
+        run: |
+          docker run \
+            -v "$(pwd)/id_rsa:/root/.ssh/id_rsa:ro" \
+            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-ansible:latest
 
   cancel-pr-on-failure:
     needs: [build-and-push-docker-image]
