@@ -5,6 +5,8 @@
         <a-row class="department" v-for="department in departments" :key="department.id">
           <router-link :to="`/departments/${department.name}`">
             <a-col :span="12">{{ department.id }}</a-col>
+            <h1>COUCOU</h1>
+
             <a-col :span="12">{{ department.name }}</a-col>
           </router-link>
         </a-row>
