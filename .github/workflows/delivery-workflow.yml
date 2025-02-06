@@ -1,19 +1,13 @@
 name: CI delivery 2025
+
 on:
-  #workflow_run:
-  #  workflows: ['CI develop 2025']
-  #  types: [completed]
-  #  branches:
-  #    - "main"
   push:
   pull_request:
-
 
 jobs:
   build-and-push-docker-image:
     runs-on: ubuntu-22.04
     steps:
-
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -31,73 +25,41 @@ jobs:
       - name: Login to DockerHub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build image and push backend
-        uses: docker/build-push-action@v3
-        with:
-          context: ./src/tp-devops-correction-docker/simple-api
-          tags: |
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:${{ env.VERSION }}
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-simple-api:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
+      - name: Build and push images
+        run: |
+          for service in simple-api database http-server devops-front-main; do
+            docker build -t ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-${service}:${{ env.VERSION }} -t ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-${service}:latest ./src/tp-devops-correction-docker/$service
+            if [ "$GITHUB_REF" == "refs/heads/main" ]; then
+              docker push ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-${service}:${{ env.VERSION }}
+              docker push ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-${service}:latest
+            fi
+          done
 
-      - name: Build image and push database
-        uses: docker/build-push-action@v3
-        with:
-          context: ./src/tp-devops-correction-docker/database
-          tags: |
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:${{ env.VERSION }}
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-database:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
+      - name: Install Ansible
+        run: sudo apt install -y ansible
 
-      - name: Build image and push httpd
-        uses: docker/build-push-action@v3
-        with:
-          context: ./src/tp-devops-correction-docker/http-server
-          tags: |
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:${{ env.VERSION }}
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-http-server:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
-
-      - name: Build image and push front
-        uses: docker/build-push-action@v3
-        with:
-          context: ./src/tp-devops-correction-docker/devops-front-main
-          tags: |
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-front:${{ env.VERSION }}
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-front:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
-
-      - name: Build image and push ansible
-        uses: docker/build-push-action@v3
-        with:
-          context: ./ansible
-          tags: |
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:${{ env.VERSION }}
-            ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:latest
-          push: ${{ github.ref == 'refs/heads/main' }}
-
-      - name: Ajouter la clé SSH à ~/.ssh
+      - name: Setup SSH Key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.ID_RSA }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-      - name: Lancer le conteneur avec la clé SSH montée
-        run: |
-          docker run --rm \
-            -v ~/.ssh/id_rsa:/.ssh/id_rsa \
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-ansible:latest
-
+      - name: Run Ansible Playbook
+        run: sudo ansible-playbook -i inventories/setup.yml launch.yml
 
   cancel-pr-on-failure:
     needs: [build-and-push-docker-image]
     if: failure()
     runs-on: ubuntu-22.04
-    steps: 
+    steps:
       - name: Close PR on Failure
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pr_number=$(jq --raw-output .pull_request.number < "$GITHUB_EVENT_PATH")
           echo "Closing PR #$pr_number due to pipeline failure"
-          curl -X PATCH \-H "Authorization: token $GITHUB_TOKEN" \-H "Accept: application/vnd.github.v3+json" \https://api.github.com/repos/$%7B%7B github.repository }}/pulls/$pr_number \-d '{"state":"closed"}'
+          curl -X PATCH \
+               -H "Authorization: token $GITHUB_TOKEN" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/repos/${{ github.repository }}/pulls/$pr_number \
+               -d '{"state":"closed"}'
