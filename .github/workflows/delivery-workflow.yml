@@ -76,11 +76,6 @@ jobs:
             ${{secrets.DOCKERHUB_USERNAME}}/tp-devops-ansible:latest
           push: ${{ github.ref == 'refs/heads/main' }}
 
-      - name: Création de la clé privée temporaire
-        run: |
-          echo "${{ secrets.ID_RSA }}" > id_rsa
-          chmod 600 id_rsa
-
       - name: Lancer le conteneur avec le fichier monté
         run: |
           docker run -e ID_RSA="${{ secrets.ID_RSA }}" ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-ansible:latest
