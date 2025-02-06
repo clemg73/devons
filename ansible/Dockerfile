@@ -2,9 +2,9 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-COPY ./inventories .
-COPY ./roles .
-COPY ./launch.yml .
+COPY ./inventories ./inventories
+COPY ./roles ./roles
+COPY ./launch.yml ./launch.yml
 
 RUN apt-get update && apt-get install -y \
     gcc \
