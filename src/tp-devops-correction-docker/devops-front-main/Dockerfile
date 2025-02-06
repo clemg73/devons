@@ -1,13 +1,13 @@
 FROM node:12.16.3-stretch-slim AS build
 
-COPY src/ /opt/front/src/
-COPY public/ /opt/front/public/
-COPY package.json /opt/front
-COPY yarn.lock /opt/front/
-COPY default.conf /opt/front/
-COPY .env.production /opt/front/
-
 WORKDIR /opt/front
+
+COPY src/ src/
+COPY public/ public/
+COPY package.json .
+COPY yarn.lock .
+COPY default.conf .
+COPY .env.production .
 
 RUN npm install
 RUN npm run build
