@@ -45,7 +45,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
 
       - name: Run Ansible Playbook
-        run: sudo ansible-playbook -i inventories/setup.yml launch.yml
+        run: sudo ansible-playbook -i ansible/inventories/setup.yml ansible/launch.yml
 
   cancel-pr-on-failure:
     needs: [build-and-push-docker-image]
