@@ -35,9 +35,6 @@ jobs:
             fi
           done
 
-      - name: Checkout code
-        uses: actions/checkout@v4
-
       - name: Setup SSH Key
         env: 
           ANSIBLE_PRIVATE_KEY: ${{ secrets.ID_RSA }}
@@ -45,12 +42,13 @@ jobs:
           echo "${ANSIBLE_PRIVATE_KEY}" > private_key.pem
           chmod 400 private_key.pem
           mkdir -p ~/.ssh
-          ssh-keyscan -H clement.gros.takima.cloud >> ~/.ssh/know_hosts
+          ssh-keyscan -H clement.gros.takima.cloud >> ~/.ssh/known_hosts
           mv private_key.pem ~/.ssh/id_rsa
-
+          chmod 400 ~/.ssh/id_rsa   # Ensure correct permissions for the SSH private key
 
       - name: Run Ansible Playbook
         run: ansible-playbook -i ansible/inventories/setup.yml ansible/launch.yml
+
 
   cancel-pr-on-failure:
     needs: [build-and-push-docker-image]
