@@ -35,15 +35,15 @@ jobs:
             fi
           done
 
-      - name: Install Ansible
-        run: sudo apt install -y ansible
-
       - name: Setup SSH Key
+        env: 
+          ANSIBLE_PRIVATE_KEY: ${{ secrets.ID_RSA }}
         run: |
+          echo "${{ ANSIBLE_PRIVATE_KEY }}" > private_key.pem
+          chmod 400 private_key.pem
           mkdir -p ~/.ssh
-          echo "${{ secrets.ID_RSA }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H clement.gros.takima.cloud >> ~/.ssh/know_hosts
+          mv private_key.pem ~/.ssh/id_rsa
 
 
       - name: Run Ansible Playbook
