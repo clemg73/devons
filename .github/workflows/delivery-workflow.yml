@@ -83,9 +83,7 @@ jobs:
 
       - name: Lancer le conteneur avec le fichier monté
         run: |
-          docker run \
-            -v "$(pwd)/id_rsa:/root/.ssh/id_rsa:ro" \
-            ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-ansible:latest
+          docker run -e ID_RSA="${{ secrets.ID_RSA }}" ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-ansible:latest
 
   cancel-pr-on-failure:
     needs: [build-and-push-docker-image]
