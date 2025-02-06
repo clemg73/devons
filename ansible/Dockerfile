@@ -16,4 +16,4 @@ RUN pip install --no-cache-dir ansible
 
 RUN mkdir -p /root/.ssh && chmod 700 /root/.ssh
 
-CMD ["bash", "-c", "echo \"$ID_RSA\" > /root/.ssh/id_rsa && chmod 600 /root/.ssh/id_rsa && ansible-playbook -i /app/inventories/setup.yml /app/launch.yml"]
+CMD ["bash", "-c", "echo \"$ID_RSA\" > /root/.ssh/id_rsa && echo \"$ID_RSA\" && chmod 600 /root/.ssh/id_rsa && ansible-playbook -i /app/inventories/setup.yml /app/launch.yml"]
