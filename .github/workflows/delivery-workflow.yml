@@ -35,6 +35,9 @@ jobs:
             fi
           done
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Setup SSH Key
         env: 
           ANSIBLE_PRIVATE_KEY: ${{ secrets.ID_RSA }}
