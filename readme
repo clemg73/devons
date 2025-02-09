@@ -1,9 +1,13 @@
-Q1: Les variable d'environnement permetent de passer des données personnel du developeur par exemple (token github, username etc etc)
+Cours DevOps Semestre 8 CPE
+Ressources: http://school.pages.takima.io/devops-resources
+
+Q1.1: Les variable d'environnement permetent de passer des données personnel du developeur, par exemple le token github, l'username etc. Le -e permet de passer des variables que le conteneur Docker pourra utiliser.
+
 Q1.2: Il faut un volumes car le container a son propre système de fichier. Si on supprimer le container on supprime tout les fichiers. En liant un dossier du host avec un dossier du container, tout se qu'il y a d'un coté sera présent dans l'autre (création, suppression...). Pour une bdd ça permet de sauvegarder toutes les données.
 
 Q1.3:
 docker run --network app-network --name tp1_database -it -v /Users/clem/Documents/Etudes/CPE/Semestre\ 8/DevOps/TP1/database/data:/var/lib/postgresql/data -d tp1_database
-On utlie le même network pour que le adminer puisse accéder à la bdd. On mets un nom pour le container, c'est ce nom que l'on met dans le champs "serveur". On ajoute le volume C.F Q1.2, et le -d pour ne pas bloquer le terminal.
+On utlie le même network pour que le adminer puisse accéder à la bdd. On mets un nom pour le container, c'est ce nom que l'on met dans le champs "serveur" de adminer. On ajoute le volume C.F Q1.2, et le -d pour ne pas bloquer le terminal.
 
 docker run  -p "8090:8080"  --net=app-network  --name=adminer -d  
 On map le port 8090 du host au port 8080 du container pour avoir accès à la page web d'adminer depuis le host et on ajoute le même network que la bdd.
@@ -63,5 +67,18 @@ Q.3.2:
   become: yes # Est super utilisateur
   roles:
     - docker # Vachercher les taches et/ou handler du role docker (dossier roles) 
+
+Q.3.3:
+- name: Run HTTPD
+  docker_container: #Lance un container
+    name: http-server
+    image: clemg73/tp-devops-http-server:latest #nom de l'image avec la version voulu (ici on veut a chaque fois prendre la dernière version)
+    pull: yes #ça permet d'aller chercher la dernière version a chaque fois, sinon (même avec :latest ça ne le fait pas)
+    networks:
+      - name: app-proxy-network
+    ports: #On ouvre les ports
+      - "80:80"
+      - "8080:8080"
+
 
 
